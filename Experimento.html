@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Mi experimento</title>
+
+<script src="jspsych-6.3.1/jspsych.js"></script>    
+<script src="jspsych-6.3.1/plugins/jspsych-html-keyboard-response.js"></script>
+<script src="jspsych-6.3.1/plugins/jspsych-survey-multi-choice.js"></script>
+<script src="jspsych-6.3.1/plugins/jspsych-html-slider-response.js"></script>
+<script src="jspsych-6.3.1/plugins/jspsych-cloze.js"></script>
+<link href="jspsych-6.3.1/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+    </head>
+    <body>
+        <script>
+            //Creamos el array que contendra nuestros trials
+            var timeline_array = [];
+                
+            //Creamos un objeto con nuestro primer trial saludando.
+            var trial_welcome = {
+            type: 'html-keyboard-response',
+            stimulus: '<p> Le invitamos a participar de una encuesta con fines académicos sobre información, preferencias y decisiones de consumo en plataformas de comercio electrónico. Este proyecto está a cargo de un investigador de la Universidad de San Andrés. <br><br> La encuesta es anónima y tiene una duración de 5 minutos aproximadamente. <br><br> ¡Muchas gracias por su colaboración! </p> <br> <img src="img/sanAndres.jpg"/> <br><br> <p> Nota: Si usted tiene alguna pregunta sobre esta investigación puede comunicarse al siguiente email: gballestero@udesa.edu.ar </p>',
+            prompt: "<p> <b> Presiona cualquier tecla para continuar </b> <p>"
+            }
+
+            //Trial Edad
+            var trial_age = {
+            type: 'cloze',
+            text: '¿Tu edad es? <br> %%',
+            button_text: "Siguiente"
+            };
+
+            //Trial Cuestionario
+
+            var gender = ["Hombre", "Mujer", "Otro"];
+            var grade = ["Primario incompleto", "Primario completo", "Secundario incomplet", "Secundario completo", "Terciario incompleta", "Terciario completa", "Universitario incompleto", "Universitario completo", "Posgrado incompleto", "Posgrado completo o mas" ];
+            var yesNo = ["Sí", "No"];
+            var opinion = ["Calificación promedio del producto", "Opiniones mas recientes", "Cantidad total de opiniones", "Otros factores"];
+
+
+            var trial_survey = {
+            type: 'survey-multi-choice',
+            questions: [
+                {prompt: "¿Cuál es tu genero?", name: 'Genero', options: gender, required:true}, 
+                {prompt: "¿Cuál es tu máximo nivel de estudios?", name: 'Estudios', options: grade, required: true},
+                {prompt: "¿Alguna vez compraste a través de alguna plataforma de comercio electrónico (por ejemplo, Mercado Libre, Rappi, Airbnb)?", name: "Compra a traves de app", options: yesNo, required: true},
+                
+                {prompt: "Cuando compras a través de alguna plataforma de comercio electrónico, ¿consideras las opiniones de otros usuarios?",name: "opiniones", options: yesNo, required: false},
+                {prompt: "Cuando consideras la opinión de otros usuarios, ¿qué factores tenés en cuenta?", name: "factor de opinion", options: opinion, required: false}
+            ],
+            button_label: "Siguiente"
+            }
+
+            //trial random
+            
+            // set up the array of all images
+            var all_images = ['img/star 3.7.jpg','img/star 4.0.jpg','img/star 4.3.jpg','img/star 4.1.jpg'];
+
+            var random_trial = {
+            type: 'html-keyboard-response',
+            stimulus: function() {
+                var rand_images = jsPsych.randomization.sampleWithoutReplacement(all_images,2);
+                return '<p> La siguiente información fue recopilada de una plataforma de comercio electrónica muy conocida. En base a esta información, por favor indica qué producto comprarías:</p> <h2> Producto A </h2> <img src="' + rand_images[0]  + '" /> <h2> Producto B </h2> <img src="' + rand_images[1]  + '" />';
+            },
+            prompt: "<p> <b> NOTA: </b> Para elegir el producto A, debes precionar la tecla 'a' o producto B debes precionar la tecla 'b' </p>",
+            choices: ['a','b']
+            };
+
+
+            
+            // Agregamos nuestros trials a timeline_array
+            timeline_array.push(trial_welcome);
+            timeline_array.push(trial_age);
+            timeline_array.push(trial_survey);
+            timeline_array.push(random_trial);
+            timeline_array.push(random_trial);
+            timeline_array.push(random_trial);
+            timeline_array.push(random_trial);
+
+            
+            
+            jsPsych.init({ 
+                 timeline: timeline_array,
+                 on_finish: function(){
+                            jsPsych.data.get().localSave('csv', 'mydata.csv')
+                            
+                 }
+            })
+            </script>
+            
+    </body>
+</html>
